@@ -1,0 +1,96 @@
+<%- include('partials/header') %>
+<div class="hero-gradient mb-4">
+	<div class="row align-items-center g-4">
+		<div class="col-lg-6">
+			<div class="mb-3"><span class="badge-soft">#1 Recruitment Platform</span></div>
+			<h1 class="display-4 fw-bold">Automate Your <span class="brand-highlight">Talent Pipeline</span></h1>
+			<p class="lead">AI-powered recruitment that screens candidates, schedules interviews, and generates offers automatically.</p>
+			<div class="d-flex gap-2 mt-3">
+				<button class="btn btn-outline-primary-soft btn-lg btn-pill" data-bs-toggle="modal" data-bs-target="#demoModal">Watch Demo</button>
+			</div>
+			<div class="stat-tiles">
+				<div class="stat-tile fade-in-up"><div class="stat-value">10K+</div><div class="stat-label">Companies</div></div>
+				<div class="stat-tile fade-in-up" style="animation-delay:.05s"><div class="stat-value">70%</div><div class="stat-label">Faster Hiring</div></div>
+				<div class="stat-tile fade-in-up" style="animation-delay:.1s"><div class="stat-value">99.9%</div><div class="stat-label">Uptime</div></div>
+			</div>
+		</div>
+		<div class="col-lg-6">
+			<div class="hero-card shadow-xl">
+				<div>
+					<h5 class="mb-2">Professional Talent Recruitment</h5>
+					<p class="mb-0">Preview of AI shortlisting, interview scheduling, and candidate experience — all in one place.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row g-4">
+	<div class="col-md-6">
+		<div class="feature-tile fade-in-up">
+			<div class="d-flex justify-content-between align-items-start mb-2">
+				<div class="feature-icon">🌟</div>
+				<span class="badge-popular">New</span>
+			</div>
+			<h5 class="mb-2">Add Talent</h5>
+			<p class="mb-3">Showcase your skills so recruiters can discover you. Add or update your skills anytime.</p>
+			<div class="d-flex gap-2">
+				<% if (currentUser && currentUser.role === 'candidate') { %>
+					<a href="/dashboard/candidate" class="btn btn-primary-gradient btn-sm btn-pill">Add Talent</a>
+				<% } else { %>
+					<a href="/signup" class="btn btn-primary-gradient btn-sm btn-pill">Add Talent</a>
+					<a href="/login?redirect=%2Fdashboard%2Fcandidate" class="btn btn-outline-primary-soft btn-sm btn-pill">Sign In</a>
+				<% } %>
+			</div>
+		</div>
+	</div>
+	<% if (!currentUser || currentUser.role === 'recruiter') { %>
+	<div class="col-md-6">
+		<div class="feature-tile fade-in-up" style="animation-delay:.05s">
+			<div class="feature-icon mb-2">🔍</div>
+			<h5 class="mb-2">Discover Candidates</h5>
+			<p class="mb-3">Recruiters can browse all available candidates along with their skill sets.</p>
+			<div class="d-flex gap-2">
+				<% if (currentUser && currentUser.role === 'recruiter') { %>
+					<a href="/dashboard/recruiter" class="btn btn-primary-gradient btn-sm btn-pill">View Candidates</a>
+				<% } else { %>
+					<a href="/signup" class="btn btn-primary-gradient btn-sm btn-pill">Become Recruiter</a>
+				<% } %>
+				<a href="/signup" class="btn btn-outline-primary-soft btn-sm btn-pill">Get Started</a>
+			</div>
+		</div>
+	</div>
+	<% } else { %>
+	<div class="col-md-6">
+		<div class="feature-tile fade-in-up" style="animation-delay:.05s">
+			<div class="feature-icon mb-2">📊</div>
+			<h5 class="mb-2">Your Profile</h5>
+			<p class="mb-3">Manage your talent profiles and showcase your skills and potential to the best potential employers .</p>
+			<div class="d-flex gap-2">
+				<a href="/dashboard/candidate" class="btn btn-primary-gradient btn-sm btn-pill">My Dashboard</a>
+				<a href="/dashboard/candidate" class="btn btn-outline-primary-soft btn-sm btn-pill">View Profile</a>
+			</div>
+		</div>
+	</div>
+	<% } %>
+</div>
+
+<!-- Demo Modal -->
+<div class="modal fade" id="demoModal" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">TalentPipeline Demo</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="ratio ratio-16x9">
+					<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Demo" allowfullscreen></iframe>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<%- include('partials/footer') %>
+
+
