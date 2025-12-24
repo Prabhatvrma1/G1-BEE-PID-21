@@ -1,0 +1,71 @@
+<%- include('../partials/header') %>
+<h3 class="mb-3">My Profile</h3>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-body">
+        <form method="post" action="/student/profile">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control" value="<%= user && user.fullName ? user.fullName : '' %>" disabled>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" value="<%= user && user.email ? user.email : '' %>" disabled>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Branch</label>
+            <input type="text" class="form-control" name="branch" placeholder="CSE, IT, ECE..." value="<%= user && user.branch ? user.branch : '' %>">
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Graduation Year</label>
+              <input type="number" class="form-control" name="graduationYear" placeholder="2026" value="<%= user && user.graduationYear ? user.graduationYear : '' %>">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">CGPA (0 - 10)</label>
+              <input type="number" step="0.01" min="0" max="10" class="form-control" name="cgpa" placeholder="8.2" value="<%= user && user.cgpa != null ? user.cgpa : '' %>">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Skills (comma separated)</label>
+            <input type="text" class="form-control" name="skills" placeholder="Java, React, SQL" value="<%= user && user.skills && user.skills.length ? user.skills.join(', ') : '' %>">
+          </div>
+
+          <button class="btn btn-primary">Save Profile</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title mb-2">Why complete your profile?</h5>
+        <p class="mb-2 text-muted">We use your CGPA and branch to highlight your eligibility against company criteria.</p>
+        <ul class="mb-0">
+          <li>See "Likely eligible" or "May not meet CGPA criteria" on student home.</li>
+          <li>Helps placement team understand your background better.</li>
+          <li>Makes it easier to match you to the right opportunities.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <h6 class="card-subtitle mb-2 text-muted">Quick links</h6>
+        <a href="/student/home" class="btn btn-outline-primary btn-sm me-2 mb-2">Student Home</a>
+        <a href="/student/resume" class="btn btn-outline-primary btn-sm mb-2">My Resume & ATS</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

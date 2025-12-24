@@ -1,0 +1,121 @@
+<%- include('../partials/header') %>
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="glass-card p-5 animate__animated animate__fadeIn">
+
+                <div class="text-center mb-5">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-circle mb-3"
+                        style="width: 80px; height: 80px;">
+                        <i class="fas fa-robot fa-3x"></i>
+                    </div>
+                    <h2 class="fw-bold mb-2">AI Mock Interviewer</h2>
+                    <p class="text-muted">Generate tailored interview questions for your target companies using AI.</p>
+                </div>
+
+                <!-- Selection Form -->
+                <% if (!interviewQuestions) { %>
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <form method="post" action="/student/interview"
+                                class="glass-soft p-4 animate__animated animate__fadeInUp">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+                                <div class="mb-4">
+                                    <label class="form-label mb-2"><i class="fas fa-building me-2"></i>Choose a
+                                        Company</label>
+                                    <select class="form-select form-select-lg" name="companyId" required>
+                                        <option value="">-- Select Target Company --</option>
+                                        <% companies.forEach(function(c) { %>
+                                            <option value="<%= c._id %>">
+                                                <%= c.name %> - <%= c.role %>
+                                            </option>
+                                            <% }) %>
+                                    </select>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button class="btn btn-primary btn-lg shadow-lg hover-scale">
+                                        <i class="fas fa-magic me-2"></i> Generate Interview Rounds
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <% } else { %>
+                        <!-- Questions Display -->
+                        <div class="animate__animated animate__fadeInUp">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h4 class="mb-0">
+                                    <span class="text-muted">Interview for:</span> <span class="text-primary fw-bold">
+                                        <%= companyName %>
+                                    </span>
+                                </h4>
+                                <a href="/student/interview" class="btn btn-outline-secondary btn-sm rounded-pill">
+                                    <i class="fas fa-redo me-1"></i> Start Over
+                                </a>
+                            </div>
+
+                            <div class="row g-4">
+                                <% interviewQuestions.forEach(function(q, index) { %>
+                                    <div class="col-12">
+                                        <div class="glass-soft p-4 h-100 hover-lift border-start border-4 <%= q.type === 'Technical' ? 'border-info' : (q.type === 'Behavioral' ? 'border-success' : 'border-warning') %>"
+                                            style="animation-delay: <%= index * 0.2 %>s;">
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span
+                                                    class="badge rounded-pill <%= q.type === 'Technical' ? 'bg-info' : (q.type === 'Behavioral' ? 'bg-success' : 'bg-warning') %> text-dark">
+                                                    <%= q.type %>
+                                                </span>
+                                                <small class="text-muted">Q<%= index + 1 %></small>
+                                            </div>
+                                            <h5 class="mb-3 fw-bold" style="line-height: 1.5; letter-spacing: 0.01em;">
+                                                <%= q.question %>
+                                            </h5>
+
+                                            <div class="accordion" id="accordionHint<%= index %>">
+                                                <div class="accordion-item bg-transparent border-0">
+                                                    <h2 class="accordion-header">
+                                                        <button
+                                                            class="accordion-button collapsed py-2 px-3 rounded-3 bg-secondary-subtle text-secondary small shadow-none"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#collapseHint<%= index %>">
+                                                            <i class="fas fa-lightbulb me-2 text-warning"></i> View Hint
+                                                            / Key Points
+                                                        </button>
+                                                    </h2>
+                                                    <div id="collapseHint<%= index %>"
+                                                        class="accordion-collapse collapse"
+                                                        data-bs-parent="#accordionHint<%= index %>">
+                                                        <div class="accordion-body text-muted small pt-2 ps-1">
+                                                            <%= q.hint %>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                            </div>
+
+                            <div class="mt-5 text-center">
+                                <p class="text-muted mb-3">Practice these questions aloud or write them down!</p>
+                                <a href="/student/interview" class="btn btn-primary px-5 py-3 rounded-pill shadow-lg">
+                                    <i class="fas fa-check me-2"></i> I'm Done Practicing
+                                </a>
+                            </div>
+                        </div>
+                        <% } %>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple script to show loader (optional visual enhancement)
+        document.querySelector('form')?.addEventListener('submit', function (e) {
+            const btn = this.querySelector('button');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Generating...';
+        });
+    </script>
+
+    <%- include('../partials/footer') %>

@@ -1,0 +1,215 @@
+<%- include('../partials/header') %>
+<div class="row g-4">
+  <!-- Left: Upload & configuration -->
+  <div class="col-lg-7">
+    <div class="glass-card p-4 hover-lift h-100">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div>
+          <h3 class="mb-1">ATS Resume Checker</h3>
+          <p class="text-muted mb-1" style="font-size: 0.9rem;">
+            Upload your Word (.docx) resume and pick a company to see how well it matches the job.
+          </p>
+        </div>
+        <span class="badge-soft small">Step 1: Upload</span>
+      </div>
+
+      <% if (resume && resume.fileOriginalName) { %>
+        <div class="alert alert-info py-2 mb-3">
+          <strong>Last uploaded:</strong> <%= resume.fileOriginalName %>
+          <% if (resume.uploadedAt) { %>
+            <span class="text-muted"> (on <%= new Date(resume.uploadedAt).toLocaleString() %>)</span>
+          <% } %>
+          <% if (resume.fileUrl) { %>
+            <span class="ms-2">
+              <a href="<%= resume.fileUrl %>" target="_blank" class="text-decoration-underline">
+                View / download
+              </a>
+            </span>
+          <% } %>
+        </div>
+      <% } %>
+
+      <form method="post" action="/student/resume/upload" enctype="multipart/form-data" class="mt-2">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="mb-3">
+          <label class="form-label">Resume file (DOCX only)</label>
+          <input type="file" class="form-control" name="resumeFile" accept=".docx" required>
+          <div class="form-text">Upload your latest resume to get the most accurate feedback.</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Company for ATS check</label>
+          <select class="form-select" name="atsCompanyId" required>
+            <option value="">-- Select company --</option>
+            <% companies.forEach(function(c) { %>
+              <option value="<%= c._id %>" <%= (selectedCompanyId && selectedCompanyId.toString() === c._id.toString()) ? 'selected' : '' %>>
+                <%= c.name %> - <%= c.role %>
+              </option>
+            <% }) %>
+          </select>
+          <div class="form-text">We compare your resume keywords with this role’s description.</div>
+        </div>
+        <button class="btn btn-primary w-100">Upload &amp; Check ATS</button>
+      </form>
+
+      <hr class="soft-divider my-4" />
+
+      <div class="row g-3" style="font-size: 0.9rem;">
+        <div class="col-md-4">
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-secondary">1</span>
+            <div>
+              <div class="fw-semibold">Upload DOCX</div>
+              <div class="text-muted">Your resume stays private to you &amp; your campus.</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-secondary">2</span>
+            <div>
+              <div class="fw-semibold">Pick a company</div>
+              <div class="text-muted">We read the job description and criteria.</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-secondary">3</span>
+            <div>
+              <div class="fw-semibold">Improve keywords</div>
+              <div class="text-muted">Use the ATS score &amp; missing terms to refine.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: ATS insights -->
+  <div class="col-lg-5">
+    <div class="glass-card p-4 hover-lift h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">ATS Insights</h4>
+        <span class="badge-soft small">Step 2: Analyze</span>
+      </div>
+
+      <% if (atsScore === null) { %>
+        <div class="alert alert-info mb-4">
+          Upload a DOCX resume and select a company to see your approximate ATS match score and missing keywords.
+        </div>
+      <% } else { %>
+        <div class="mb-4 text-center">
+          <div class="ats-gauge mx-auto mb-2" style="--score:<%= atsScore %>;">
+            <div class="ats-gauge-circle">
+              <div class="ats-gauge-inner">
+                <div class="ats-gauge-score"><%= atsScore %>%</div>
+                <div class="ats-gauge-label">Match</div>
+              </div>
+            </div>
+          </div>
+          <% if (typeof atsExplanation !== 'undefined' && atsExplanation) { %>
+            <p class="mt-2 text-muted" style="font-size: 0.9rem;"><%= atsExplanation %></p>
+          <% } else { %>
+            <p class="mt-2 text-muted" style="font-size: 0.9rem;">
+              Higher is better. This is a simple keyword-based estimate – use it as guidance, not a final verdict.
+            </p>
+          <% } %>
+        </div>
+      <% } %>
+
+      <% if (resume && resume.fileOriginalName) { %>
+        <div class="card mb-3">
+          <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+              <h6 class="mb-1">Uploaded resume</h6>
+              <p class="mb-1" style="font-size: 0.9rem;">
+                <strong>File:</strong> <%= resume.fileOriginalName %>
+                <% if (resume.uploadedAt) { %>
+                  <span class="text-muted"> (on <%= new Date(resume.uploadedAt).toLocaleString() %>)</span>
+                <% } %>
+              </p>
+            </div>
+            <div>
+              <% if (resume.fileUrl) { %>
+                <a href="<%= resume.fileUrl %>" target="_blank" class="btn btn-sm btn-outline-primary">
+                  View / download
+                </a>
+              <% } else { %>
+                <p class="text-muted mb-0" style="font-size: 0.85rem;">File stored but direct link is not available.</p>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      <% } %>
+
+      <div class="card">
+        <div class="card-body">
+          <h6 class="mb-2">Missing / weak keywords</h6>
+          <% if (!atsMissingKeywords || atsMissingKeywords.length === 0) { %>
+            <p class="text-muted mb-0">Great! Your resume already covers most important keywords for this company.</p>
+          <% } else { %>
+            <p class="text-muted" style="font-size: 0.9rem;">
+              Consider naturally adding some of these terms if they truly match your experience and skills:
+            </p>
+            <div class="d-flex flex-wrap gap-2">
+              <% atsMissingKeywords.forEach(function(word) { %>
+                <span class="badge bg-secondary"><%= word %></span>
+              <% }) %>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .ats-gauge {
+    width: 150px;
+    height: 150px;
+    position: relative;
+  }
+
+  .ats-gauge-circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background:
+      conic-gradient(
+        rgba(56,189,248,0.95) calc(var(--score) * 1%),
+        rgba(30,64,175,0.4) 0
+      );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 25px rgba(56,189,248,0.6);
+    transition: background 0.5s ease-out;
+  }
+
+  .ats-gauge-inner {
+    width: 68%;
+    height: 68%;
+    border-radius: 50%;
+    background: radial-gradient(circle at top, #020617, #020617 60%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(148,163,184,0.6);
+  }
+
+  .ats-gauge-score {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: #e0f2fe;
+  }
+
+  .ats-gauge-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #9ca3af;
+  }
+</style>
+
+<%- include('../partials/footer') %>

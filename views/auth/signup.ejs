@@ -1,0 +1,60 @@
+<%- include('../partials/header') %>
+<div class="row justify-content-center fade-in-up">
+	<div class="col-md-7 col-lg-6">
+		<div class="glass-card p-4 hover-lift">
+			<div class="d-flex justify-content-between align-items-center mb-3">
+				<h3 class="mb-0">Create account</h3>
+				<span class="badge-soft small">Choose your role</span>
+			</div>
+			<p class="text-muted mb-3" style="font-size: 0.9rem;">
+				Sign up as a <strong>Student</strong> to track companies and ATS, or as <strong>Placement / Admin</strong> to manage drives.
+			</p>
+			<% if (typeof error !== 'undefined' && error) { %>
+				<div class="alert alert-danger mb-3"><%= error %></div>
+			<% } %>
+			<form method="post" action="/auth/signup">
+				<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+				<div class="mb-3">
+					<label class="form-label">Role</label>
+					<select name="role" class="form-select" required>
+						<option value="candidate" <%= (old && old.role === 'candidate') ? 'selected' : '' %>>Student</option>
+						<option value="recruiter" <%= (old && old.role === 'recruiter') ? 'selected' : '' %>>Placement / Admin</option>
+					</select>
+				</div>
+				<div class="mb-3">
+					<label class="form-label">Full name</label>
+					<input type="text" name="fullName" class="form-control" value="<%= old && old.fullName ? old.fullName : '' %>" required>
+				</div>
+				<div class="mb-3">
+					<label class="form-label">Email</label>
+					<input type="email" name="email" class="form-control" value="<%= old && old.email ? old.email : '' %>" required>
+				</div>
+				<div class="mb-3">
+					<label class="form-label">Password</label>
+					<input type="password" name="password" class="form-control" required>
+				</div>
+				<div class="mb-3">
+					<label class="form-label">Gender</label>
+					<select name="gender" class="form-select">
+						<option value="" <%= (!old || !old.gender) ? 'selected' : '' %>>Prefer not to say</option>
+						<option value="male" <%= (old && old.gender === 'male') ? 'selected' : '' %>>Male</option>
+						<option value="female" <%= (old && old.gender === 'female') ? 'selected' : '' %>>Female</option>
+						<option value="nonbinary" <%= (old && old.gender === 'nonbinary') ? 'selected' : '' %>>Non-binary / Others</option>
+					</select>
+				</div>
+				<div class="mb-3">
+					<label class="form-label">Location</label>
+					<input type="text" name="location" class="form-control" value="<%= old && old.location ? old.location : '' %>">
+				</div>
+				<button class="btn btn-primary w-100 mb-2">Create account</button>
+				<div class="d-flex justify-content-between align-items-center mt-2" style="font-size: 0.85rem;">
+					<span class="text-muted">Already have an account?</span>
+					<a href="/login" class="text-decoration-none">Login instead</a>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<%- include('../partials/footer') %>
+
+

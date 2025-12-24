@@ -1,0 +1,149 @@
+<%- include('../partials/header') %>
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="d-flex justify-content-between align-items-center mb-4 animate__animated animate__fadeInDown">
+        <h3 class="mb-0 fw-bold"><i class="fas fa-briefcase me-2 text-primary"></i>Upcoming & Recent</h3>
+        <span class="badge bg-primary-subtle rounded-pill text-primary px-3 py-2">
+          <i class="fas fa-sync-alt me-1"></i> Live Updates
+        </span>
+      </div>
+
+      <% if (!companies || companies.length===0) { %>
+        <div class="alert alert-info glass-soft animate__animated animate__fadeInUp">
+          <i class="fas fa-info-circle me-2"></i> No active companies at the moment. Please check back later!
+        </div>
+        <% } else { %>
+          <div class="row g-3">
+            <% companies.forEach(function(c, index) { %>
+              <div class="col-12 animate__animated animate__fadeInUp" style="animation-delay: <%= index * 0.1 %>s;">
+                <div class="glass-card p-4 hover-lift position-relative overflow-hidden h-100">
+                  <div class="row align-items-center">
+                    <div class="col-md-8">
+                      <div class="d-flex align-items-center mb-2">
+                        <div
+                          class="icon-sq me-3 d-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-circle"
+                          style="width: 48px; height: 48px;">
+                          <i class="fas fa-building fa-lg"></i>
+                        </div>
+                        <div>
+                          <h4 class="mb-0 fw-bold">
+                            <%= c.name %>
+                          </h4>
+                          <div class="text-muted small"><i class="fas fa-clock me-1"></i> Posted <%= new
+                              Date(c.createdAt).toLocaleDateString() %>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="mb-3">
+                        <span class="badge badge-soft me-2"><i class="fas fa-user-tag me-1"></i>
+                          <%= c.role %>
+                        </span>
+                        <% if (c.location) { %>
+                          <span
+                            class="badge bg-secondary-subtle text-secondary border border-secondary rounded-pill me-2"><i
+                              class="fas fa-map-marker-alt me-1"></i>
+                            <%= c.location %>
+                          </span>
+                          <% } %>
+                            <% if (c.ctc) { %>
+                              <span class="badge bg-success-subtle text-success border border-success rounded-pill"><i
+                                  class="fas fa-money-bill-wave me-1"></i>
+                                <%= c.ctc %>
+                              </span>
+                              <% } %>
+                      </div>
+
+                      <div class="text-muted small mb-3 mb-md-0">
+                        <% if (c.eligibilityCriteria) { %>
+                          <div class="d-flex align-items-start gap-2">
+                            <i class="fas fa-graduation-cap mt-1 text-info"></i>
+                            <span>
+                              <%= c.eligibilityCriteria.substring(0, 100) %>...
+                            </span>
+                          </div>
+                          <% } %>
+
+                            <% if (eligibilityByCompanyId && eligibilityByCompanyId[c._id.toString()]) { %>
+                              <% const status=eligibilityByCompanyId[c._id.toString()]; %>
+                                <div class="mt-2">
+                                  <% if (status==='eligible' ) { %>
+                                    <span class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i> You look
+                                      eligible</span>
+                                    <% } else if (status==='not-eligible' ) { %>
+                                      <span class="text-danger fw-bold"><i class="fas fa-exclamation-circle me-1"></i>
+                                        Check eligibility (CGPA)</span>
+                                      <% } %>
+                                </div>
+                                <% } %>
+                      </div>
+                    </div>
+
+                    <div class="col-md-4 text-md-end">
+                      <% if (c.visitDate) { %>
+                        <div class="mb-3">
+                          <div class="text-uppercase small text-muted fw-bold" style="font-size: 0.7rem;">Visit Date
+                          </div>
+                          <div class="h5 mb-0 text-primary">
+                            <%= new Date(c.visitDate).toLocaleDateString('en-US', { day: 'numeric' , month: 'short' })
+                              %>
+                          </div>
+                        </div>
+                        <% } %>
+
+                          <% if (appliedCompanyIds && appliedCompanyIds.has(c._id.toString())) { %>
+                            <button type="button" class="btn btn-outline-secondary w-100 disabled"
+                              style="opacity: 0.7;">
+                              <i class="fas fa-check-double me-1"></i> Applied
+                            </button>
+                            <% } else { %>
+                              <form method="post" action="/student/companies/<%= c._id %>/apply">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <button type="submit" class="btn btn-primary w-100 hover-scale">
+                                  Apply Now <i class="fas fa-arrow-right ms-1"></i>
+                                </button>
+                              </form>
+                              <% } %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <% }) %>
+          </div>
+          <% } %>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="glass-soft p-4 sticky-top animate__animated animate__fadeInRight" style="top: 20px; z-index: 10;">
+        <h4 class="mb-3 fw-bold"><i class="fas fa-bell me-2 text-warning"></i>Notifications</h4>
+        <% if (!notifications || notifications.length===0) { %>
+          <p class="text-muted text-center py-4">No new notifications.</p>
+          <% } else { %>
+            <div class="list-group list-group-flush">
+              <% notifications.forEach(function(n) { %>
+                <div class="list-group-item bg-transparent px-0 py-3 border-bottom border-secondary">
+                  <div class="d-flex w-100 justify-content-between mb-1">
+                    <h6 class="mb-1 fw-bold text-white">
+                      <%= n.title %>
+                    </h6>
+                    <small class="text-muted" style="font-size: 0.7rem;">
+                      <%= new Date(n.createdAt).toLocaleDateString() %>
+                    </small>
+                  </div>
+                  <p class="mb-1 text-muted small">
+                    <%= n.message %>
+                  </p>
+                  <% if (n.company) { %>
+                    <small class="badge bg-dark border border-secondary rounded-pill mt-1">
+                      <i class="fas fa-building me-1"></i>
+                      <%= n.company.name %>
+                    </small>
+                    <% } %>
+                </div>
+                <% }) %>
+            </div>
+            <% } %>
+      </div>
+    </div>
+  </div>
+  <%- include('../partials/footer') %>

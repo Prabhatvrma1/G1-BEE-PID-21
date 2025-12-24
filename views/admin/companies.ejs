@@ -1,0 +1,173 @@
+<%- include('../partials/header') %>
+
+  <div class="row g-4">
+    <!-- Left Column: Add Company Form -->
+    <div class="col-lg-5">
+      <div class="glass-card p-4 h-100 animate__animated animate__fadeInLeft">
+        <div class="d-flex align-items-center mb-4">
+          <div class="bg-primary-subtle text-primary rounded-circle p-3 me-3">
+            <i class="fas fa-building fa-2x"></i>
+          </div>
+          <div>
+            <h3 class="fw-bold mb-0">Add New Drive</h3>
+            <p class="text-muted small mb-0">Create a new recruitment event</p>
+          </div>
+        </div>
+
+        <form method="post" action="/admin/companies">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label fw-semibold">Company Name <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0"><i
+                    class="fas fa-signature text-muted"></i></span>
+                <input class="form-control border-start-0 ps-0" name="name" placeholder="e.g. Google" required>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label fw-semibold">Role / Position <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0"><i
+                    class="fas fa-briefcase text-muted"></i></span>
+                <input class="form-control border-start-0 ps-0" name="role" placeholder="e.g. Software Engineer"
+                  required>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Location</label>
+              <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0"><i
+                    class="fas fa-map-marker-alt text-muted"></i></span>
+                <input class="form-control border-start-0 ps-0" name="location" placeholder="City">
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Visit Date</label>
+              <input type="date" class="form-control" name="visitDate">
+            </div>
+
+            <div class="col-12">
+              <label class="form-label fw-semibold">CTC / Package</label>
+              <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0"><i
+                    class="fas fa-rupee-sign text-muted"></i></span>
+                <input class="form-control border-start-0 ps-0" name="ctc" placeholder="e.g. 10 LPA">
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label fw-semibold">Eligibility Criteria</label>
+              <textarea class="form-control" name="eligibilityCriteria" rows="2"
+                placeholder="e.g. CGPA > 7.0, CSE/IT only..."></textarea>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label fw-semibold">Short Description</label>
+              <textarea class="form-control" name="description" rows="3"
+                placeholder="Description of the role and selection process..."></textarea>
+            </div>
+          </div>
+
+          <div class="d-grid mt-4">
+            <button class="btn btn-primary btn-lg shadow-sm hover-scale rounded-pill">
+              <i class="fas fa-plus-circle me-2"></i> Create Drive & Notify Students
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Right Column: List of Companies -->
+    <div class="col-lg-7">
+      <div class="glass-soft p-4 h-100 animate__animated animate__fadeInRight">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h3 class="fw-bold mb-0">Active Drives</h3>
+            <p class="text-muted small mb-0">Manage existing recruitment drives</p>
+          </div>
+          <span class="badge bg-primary rounded-pill px-3 py-2">
+            <%= companies ? companies.length : 0 %> Drives
+          </span>
+        </div>
+
+        <% if (!companies || companies.length===0) { %>
+          <div class="text-center py-5">
+            <div class="mb-3 text-muted opacity-50">
+              <i class="fas fa-folder-open fa-4x"></i>
+            </div>
+            <h5 class="text-muted">No drives found</h5>
+            <p class="small text-muted">Use the form on the left to add your first company.</p>
+          </div>
+          <% } else { %>
+            <div class="d-flex flex-column gap-3">
+              <% companies.forEach(function(c, index) { %>
+                <div class="glass-card p-3 position-relative animate__animated animate__fadeInUp"
+                  style="animation-delay: <%= index * 0.1 %>s; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: default;"
+                  onmouseover="this.style.transform='translateY(-4px) scale(1.005)'; this.style.boxShadow='0 12px 30px rgba(0,0,0,0.3)';"
+                  onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.1)';">
+                  <div class="row align-items-center">
+                    <!-- Company Info -->
+                    <div class="col-md-7">
+                      <div class="d-flex align-items-center">
+                        <div
+                          class="icon-sq bg-primary-subtle text-primary rounded-circle p-3 me-3 d-flex align-items-center justify-content-center shadow-sm animate__animated animate__pulse animate__infinite"
+                          style="width: 50px; height: 50px; font-weight: bold; font-size: 1.2rem; animation-duration: 3s;">
+                          <%= c.name.charAt(0).toUpperCase() %>
+                        </div>
+                        <div>
+                          <h5 class="mb-1 fw-bold text-light">
+                            <%= c.name %>
+                          </h5>
+                          <div class="d-flex align-items-center flex-wrap gap-2">
+                            <span class="badge bg-transparent border border-light text-light rounded-pill px-3 py-2">
+                              <i class="fas fa-briefcase me-1"></i>
+                              <%= c.role %>
+                            </span>
+                            <% if(c.ctc) { %>
+                              <span class="badge bg-success-subtle text-success border border-success rounded-pill">
+                                <i class="fas fa-rupee-sign me-1"></i>
+                                <%= c.ctc %>
+                              </span>
+                              <% } %>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Date & Action -->
+                    <div class="col-md-5 mt-3 mt-md-0 d-flex justify-content-md-end align-items-center gap-3">
+                      <% if (c.visitDate) { %>
+                        <div class="text-center px-3 border-end border-secondary">
+                          <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Visit
+                            Date</small>
+                          <span class="text-info fw-bold">
+                            <%= new Date(c.visitDate).toLocaleDateString('en-US', { month: 'short' , day: 'numeric' ,
+                              year: 'numeric' }) %>
+                          </span>
+                        </div>
+                        <% } %>
+
+                          <a href="/admin/companies/<%= c._id %>/applicants"
+                            class="btn btn-primary rounded-pill shadow-sm px-4 group-hover-btn"
+                            style="transition: all 0.3s ease;"
+                            onmouseover="this.querySelector('i').style.transform='translateX(4px)'"
+                            onmouseout="this.querySelector('i').style.transform='translateX(0)'">
+                            <span>View Applicants</span> <i class="fas fa-arrow-right ms-2"
+                              style="transition: transform 0.3s ease;"></i>
+                          </a>
+                    </div>
+                  </div>
+                </div>
+                <% }) %>
+            </div>
+            <% } %>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../partials/footer') %>
